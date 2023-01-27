@@ -1,20 +1,45 @@
 // div search ul>li*3 
+import { useState } from 'react';
 import {BiSearch,BiCaretDown,BiCheck} from 'react-icons/bi'
 
-function Search(){
+function DropDown ({toggleSort,petName,ownerName,aptDate}){
+    if(!toggleSort){
+        return null;
+    }
+
+    return(
+        <ul>
+        <li>{petName}<BiCheck/></li>
+        <li>{ownerName}<BiCheck/></li>
+        <li>{aptDate}<BiCheck/></li>
+        </ul>
+    )
+}
+
+
+
+function Search({filterAppointments,searched}){
+    const [toggleSort,setToggleSort] = useState(false);
+   
     return(
         <div id="search">
-            <p>
+            <div>
                 <BiSearch />
-                <input type="text" placeholder="search"/>
-                <button type="button">정렬하기</button>
-                <BiCaretDown />
-                <ul>
-                    <li>애기이름<BiCheck/></li>
-                    <li>예약자명<BiCheck/></li>
-                    <li>날짜<BiCheck/></li>
-                </ul>
-            </p>
+                <input type="text" placeholder="search"
+                onChange={filterAppointments}
+                />
+                {searched.map((appointment)=>
+                (
+                    <DropDown key={appointment.id}
+                    {...appointment}/>
+                ))
+                }
+                <button
+                type="button"
+                onClick={()=>setToggleSort(!toggleSort)}
+                >정렬하기<BiCaretDown /></button>
+                <DropDown toggleSort={toggleSort}/>
+            </div>
         </div>
     )
 }
