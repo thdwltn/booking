@@ -2,23 +2,26 @@
 import { useState } from 'react';
 import {BiSearch,BiCaretDown,BiCheck} from 'react-icons/bi'
 
-function DropDown ({toggleSort,petName,ownerName,aptDate}){
+function DropDown ({toggleSort,sortBy,onSortChange}){
     if(!toggleSort){
         return null;
     }
 
     return(
         <ul>
-        <li>{petName}<BiCheck/></li>
-        <li>{ownerName}<BiCheck/></li>
-        <li>{aptDate}<BiCheck/></li>
+        <li onClick={()=>onSortChange('petName')}>애기이름
+        {(sortBy === 'petName') && <BiCheck/>}</li>
+        <li onClick={()=>onSortChange('ownerName')}>예약자명
+        {(sortBy === 'ownerName') && <BiCheck/>}</li>
+        <li onClick={()=>onSortChange('aptDate')}>날짜
+        {(sortBy === 'aptDate') && <BiCheck/>}</li>
         </ul>
     )
 }
 
 
 
-function Search({filterAppointments,searched}){
+function Search({query,onQueryChange,sortBy,onSortChange}){
     const [toggleSort,setToggleSort] = useState(false);
    
     return(
@@ -26,19 +29,17 @@ function Search({filterAppointments,searched}){
             <div>
                 <BiSearch />
                 <input type="text" placeholder="search"
-                onChange={filterAppointments}
+                value={query}
+                onChange={(e)=>{onQueryChange(e.target.value)}}
                 />
-                {searched.map((appointment)=>
-                (
-                    <DropDown key={appointment.id}
-                    {...appointment}/>
-                ))
-                }
                 <button
                 type="button"
                 onClick={()=>setToggleSort(!toggleSort)}
                 >정렬하기<BiCaretDown /></button>
-                <DropDown toggleSort={toggleSort}/>
+                <DropDown 
+                toggleSort={toggleSort}
+                sortBy = {sortBy}
+                onSortChange = {mySort => onSortChange(mySort)}/>
             </div>
         </div>
     )

@@ -8,11 +8,19 @@ function App(){
     // data state
     const [appointList,setAppointList] = useState([]);
     const [query,setQuery] = useState('');
-    // const [sortBy,setSortBy] = useState(petName);<-이건나중에 
-    const filterAppointments = (e) => {
-        setQuery(e.target.value.toLowerCase())
-    };
-    const searched = appointList.filter((item)=>item.petName.toLowerCase().includes(query));
+    const [sortBy,setSortBy] = useState('petName');
+
+    const filterAppointments = appointList.filter(item => {
+        return(
+            item.petName.toLowerCase().includes(query.toLowerCase()) ||
+            item.ownerName.toLowerCase().includes(query.toLowerCase()) ||
+            item.aptNotes.toLowerCase().includes(query.toLowerCase()) 
+        )
+        }).sort(
+            (a,b) => {
+                return(a[sortBy].toLowerCase() < b[sortBy].toLowerCase() ? -1 : 1)
+            }
+        );
 
 
     
@@ -39,11 +47,22 @@ function App(){
     return(
         <article>
             <h3><BiArchive style={{color:"#d47777"}}/>예약시스템</h3>           
-            <AddAppointment />
-            <Search />
+            <AddAppointment
+            onSendAppointment = {
+                myAppointment => setAppointList([...appointList,myAppointment])
+            }
+            lastId = {
+                appointList.reduce((max, item) => Number(item.id) > max ? Number(item.id) : max,0)
+            }/>
+            <Search 
+                query = {query}
+                onQueryChange = {(myQuery)=> setQuery(myQuery)}
+                sortBy = {sortBy}
+                onSortChange = {(mySortBy)=> setSortBy(mySortBy)}
+                />
             <div id="list">
                 <ul>
-                {appointList.map(
+                {filterAppointments.map(
                     (appointment)=>
                     ( <AddInfo key={appointment.id}
                         appointment={appointment}
